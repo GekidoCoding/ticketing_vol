@@ -1,0 +1,94 @@
+<project name="ticketing" default="build" basedir=".">
+    <!-- Initialisation des propriétés -->
+    <property name="src.dir"      value="java"/>
+    <property name="resources.dir" value="resources"/>
+    <property name="lib.dir"      value="lib"/>
+    <property name="web.dir"      value="web"/>
+    <property name="xml.dir"      value="xml"/>
+    <property name="build.dir"    value="build"/>
+    <property name="classes.dir"  value="${build.dir}/classes"/>
+    <property name="temp.dir"     value="${build.dir}/temp"/>
+    <property name="temp.webinf.dir" value="${temp.dir}/WEB-INF"/>
+    <property name="temp.classes.dir" value="${temp.webinf.dir}/classes"/>
+    <property name="temp.lib.dir"  value="${temp.webinf.dir}/lib"/>
+    <property name="target.dir"   value="target"/>
+    <property name="war.file"     value="${target.dir}/ticketing.war"/>
+    
+    <!-- 🔧 À adapter selon votre installation Tomcat -->
+    <property name="tomcat.dir"   value="/opt/tomcat/apache-tomcat-9.0.105"/>
+
+    <!-- Nettoyage -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${target.dir}"/>
+    </target>
+
+    <!-- Préparation des dossiers -->
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${temp.dir}"/>
+        <mkdir dir="${temp.webinf.dir}"/>
+        <mkdir dir="${temp.classes.dir}"/>
+        <mkdir dir="${temp.lib.dir}"/>
+        <mkdir dir="${target.dir}"/>
+    </target>
+
+    <!-- Compilation des fichiers .java avec -g et -parameters -->
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
+            <compilerarg value="-parameters"/>
+            <classpath>
+                <fileset dir="${lib.dir}" includes="**/*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- Copie des fichiers et dossiers -->
+    <target name="copy-to-temp" depends="compile">
+        <!-- Copie de tous les fichiers et dossiers de web vers build/temp -->
+        <copy todir="${temp.dir}">
+            <fileset dir="${web.dir}"/>
+        </copy>
+
+        <!-- Copie des fichiers XML de web vers build/temp/WEB-INF -->
+        <copy todir="${temp.webinf.dir}">
+            <fileset dir="${web.dir}" includes="**/*.xml"/>
+        </copy>
+
+        <!-- Copie des fichiers XML de xml vers build/temp/WEB-INF -->
+        <copy todir="${temp.webinf.dir}">
+            <fileset dir="${xml.dir}" includes="**/*.xml"/>
+        </copy>
+
+        <!-- Copie des classes compilées de build/classes vers build/temp/WEB-INF/classes -->
+        <copy todir="${temp.classes.dir}">
+            <fileset dir="${classes.dir}"/>
+        </copy>
+
+        <!-- Copie des bibliothèques de lib vers build/temp/WEB-INF/lib -->
+        <copy todir="${temp.lib.dir}">
+            <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        </copy>
+
+        <!-- Copie des ressources de resources vers build/temp/WEB-INF/classes -->
+        <copy todir="${temp.classes.dir}">
+            <fileset dir="${resources.dir}"/>
+        </copy>
+    </target>
+
+    <!-- Création du .war -->
+    <target name="war" depends="copy-to-temp">
+        <war destfile="${war.file}" webxml="${temp.webinf.dir}/web.xml">
+            <fileset dir="${temp.dir}"/>
+        </war>
+    </target>
+
+    <!-- 🚀 Déploiement automatique dans Tomcat -->
+    <target name="deploy" depends="war">
+        <copy file="${war.file}" todir="${tomcat.dir}/webapps"/>
+    </target>
+
+    <!-- Build complet + déploiement -->
+    <target name="build" depends="clean,compile,copy-to-temp,war,deploy"/>
+</project>

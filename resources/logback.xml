@@ -1,0 +1,35 @@
+<configuration>
+    <!-- Property to define the log directory -->
+    <property name="LOG_DIR" value="${catalina.home}/logs" />
+
+    <!-- Console Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender with timestamp-based naming -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Current log file with timestamp at startup -->
+        <file>${LOG_DIR}/sprint-framework.%d{yyyy-MM-dd_HH-mm-ss}.log</file>
+        <!-- Rolling policy for archiving -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Archive pattern: daily rollover with timestamp -->
+            <fileNamePattern>${LOG_DIR}/sprint-framework.%d{yyyy-MM-dd_HH-mm-ss}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger configuration -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+
+    <!-- Specific logger for sprint framework -->
+    <logger name="mg.sprint.framework" level="DEBUG" />
+</configuration>
