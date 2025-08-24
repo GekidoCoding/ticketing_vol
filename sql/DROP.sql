@@ -1,0 +1,37 @@
+drop table TICKETING_ADMIN
+/
+
+drop table TICKETING_SIEGE
+/
+
+drop table TICKETING_PROMOTION
+/
+
+drop table TICKETING_RESERVATION
+/
+
+drop table TICKETING_CLASSE
+/
+
+drop table TICKETING_STATUT_RESERVATION
+/
+
+drop table TICKETING_UTILISATEUR
+/
+
+drop table TICKETING_VOL
+/
+
+drop table TICKETING_AVION
+/
+
+drop table TICKETING_COMPANY
+/
+
+drop table TICKETING_VILLE
+/
+
+drop table TICKETING_CATEGORIE_AGE
+/
+
+COMMIT;
